@@ -22,3 +22,9 @@ data Item = Int Integer | Op String deriving Show
 -- Kind of works but still cannot handle "1 2--3" or even "+-3"
 items  = many item
 item = try integer <|> operator
+
+test = run items
+good1 = test "1 2- -3"
+good2 = test "+ -3"
+prob1 = test "1 2--3"
+prob2 = test "+-3"
