@@ -7,7 +7,8 @@ import Control.Applicative((<$>),(<$),(*>),(<*))
 run p = parse (whiteSpace *> p <* eof) "stdin"
 lexer = PT.makeTokenParser lexDef
 lexDef = emptyDef { 
-  PT.reservedOpNames = ["*","/","+","-"]
+  PT.reservedOpNames = ["*","/","+","-"],
+  PT.opLetter = oneOf ""
   }
          
 
@@ -25,6 +26,5 @@ item = try integer <|> operator
 
 test = run items
 good1 = test "1 2- -3"
-good2 = test "+ -3"
-prob1 = test "1 2--3"
-prob2 = test "+-3"
+good2 = test "1 2--3"
+good3 = test "+-3"
