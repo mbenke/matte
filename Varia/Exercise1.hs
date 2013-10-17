@@ -10,6 +10,7 @@ test1 = run pE "2*3*4+5+6"
 test2 = run pE "1*2+3*4+5"
 -- >>> test2
 -- Right 25
+test3 = run mE "2*3*4+5+6"
 
 run p = parse (spaces *> p <* eof) "stdin"
 
@@ -25,6 +26,22 @@ pE' = e1 <|> e2 where
   e1 = build <$> (char '*' *> pE) <*> (char '+' *> pF) <*> pE' where
   e2 = eps id
   build e f g = g . (+f) . (*e) -- (t * e + f)
-  
+
 pF = parens pE <|> integer
+
+-- Monadically 
+
+mE :: Parser T
+mE = mF >>= mE'
+mE' :: T -> Parser T
+mE' t = e1 <|> e2 where
+  e1 = do
+     char '*'
+     e <- mE
+     char '+'
+     f <- mF
+     mE' $ t * e + f
+  e2 = return t
+mF = pF
+  
 
